@@ -48,12 +48,11 @@ export default function Home() {
               Ashwin Senthil Arumugam
             </motion.h1>
             <motion.p 
-              className="text-xl sm:text-2xl text-gray-600 dark:text-gray-300"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-xl text-gray-600 dark:text-gray-300 mb-8"
+              variants={fadeInUp}
+              transition={{ delay: 0.2 }}
             >
-              Software Developer | AI Researcher | Full Stack Engineer
+              I&apos;m a passionate software developer with expertise in building scalable applications and conducting cutting-edge research in AI and distributed systems.
             </motion.p>
             <motion.div 
               className="flex justify-center space-x-4"
@@ -214,6 +213,17 @@ export default function Home() {
             viewport={{ once: true }}
           >
             {[
+              {
+                title: "Software Development Engineer",
+                company: "Amazon",
+                period: "2023 - Present",
+                description: "Working on distributed systems and cloud infrastructure.",
+                achievements: [
+                  "Led development of microservices architecture",
+                  "Improved system reliability by 40%",
+                  "Implemented automated testing pipeline"
+                ]
+              },
               {
                 title: "SAP - Associate Developer",
                 period: "Jul 2020 - Jul 2023",
