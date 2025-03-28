@@ -228,12 +228,13 @@
         }
         .gradient-border {
             position: relative;
-            border-radius: 0.5rem;
-            padding: 0.5rem;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
             background: linear-gradient(45deg, #4f46e5, #818cf8, #4f46e5);
             background-size: 200% 200%;
             animation: gradient 3s ease infinite;
             box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            display: inline-block;
         }
         @keyframes gradient {
             0% { background-position: 0% 50% }
@@ -244,6 +245,10 @@
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 200px;
         }
         .resume-button::before {
             content: '';
@@ -266,6 +271,13 @@
         .resume-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .resume-button svg {
+            margin-right: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+        .resume-button:hover svg {
+            transform: translateY(2px);
         }
     </style>
 </head>
@@ -322,16 +334,14 @@
             <div class="gradient-border">
                 <a 
                     href="/portfolio/assets/resume.pdf"
-                    class="resume-button inline-block px-8 py-4 bg-white text-gray-900 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    class="resume-button px-8 py-4 bg-white text-gray-900 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    <span class="flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                        Download Resume
-                    </span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download Resume
                 </a>
             </div>
         </div>
