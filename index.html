@@ -584,7 +584,7 @@
     </section>
 
     <!-- Add this before the closing body tag -->
-    <div class="visitor-counter" id="visitorCounter"></div>
+    <div class="visitor-counter" id="visitorCounter">0</div>
 
     <script>
         // Dark mode toggle functionality
@@ -646,6 +646,41 @@
                     });
                 }
             });
+        });
+
+        // Initialize Firebase and visitor counter
+        document.addEventListener('DOMContentLoaded', () => {
+            const visitorCounter = document.getElementById('visitorCounter');
+            if (!visitorCounter) return;
+
+            try {
+                const database = firebase.database();
+                database.ref('visitorCount').once('value', (snapshot) => {
+                    let count = snapshot.val() || 0;
+                    count++;
+                    
+                    database.ref('visitorCount').set(count);
+                    visitorCounter.textContent = count;
+
+                    // Add animation
+                    visitorCounter.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        visitorCounter.style.transform = 'scale(1)';
+                    }, 300);
+                }).catch((error) => {
+                    console.error('Error accessing database:', error);
+                    // Fallback to localStorage
+                    let count = parseInt(localStorage.getItem('visitCount') || '0') + 1;
+                    localStorage.setItem('visitCount', count.toString());
+                    visitorCounter.textContent = count;
+                });
+            } catch (error) {
+                console.error('Error initializing database:', error);
+                // Fallback to localStorage
+                let count = parseInt(localStorage.getItem('visitCount') || '0') + 1;
+                localStorage.setItem('visitCount', count.toString());
+                visitorCounter.textContent = count;
+            }
         });
     </script>
 </body>
