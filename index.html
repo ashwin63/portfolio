@@ -20,34 +20,52 @@
             messagingSenderId: "1082415641244",
             appId: "1:1082415641244:web:a7908603e9bc322a75b359",
             measurementId: "G-M03S80E7FG",
-            databaseURL: "https://portfolio-visitor-counte-2209a-default-rtdb.firebaseio.com"
+            databaseURL: "https://portfolio-visitor-counte-2209a-default-rtdb.asia-southeast1.firebasedatabase.app"
         };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const analytics = firebase.analytics();
-        const database = firebase.database();
 
         // Visitor counter functionality
         const visitorCounter = document.getElementById('visitorCounter');
         
-        // Get the current count from Firebase
-        database.ref('visitorCount').once('value', (snapshot) => {
-            let count = snapshot.val() || 0;
-            count++;
+        // Try to initialize the database
+        try {
+            const database = firebase.database();
             
-            // Update the count in Firebase
-            database.ref('visitorCount').set(count);
-            
-            // Update the display
-            visitorCounter.textContent = count;
+            // Get the current count from Firebase
+            database.ref('visitorCount').once('value', (snapshot) => {
+                let count = snapshot.val() || 0;
+                count++;
+                
+                // Update the count in Firebase
+                database.ref('visitorCount').set(count);
+                
+                // Update the display
+                visitorCounter.textContent = count;
 
-            // Add animation
-            visitorCounter.style.transform = 'scale(1.2)';
-            setTimeout(() => {
-                visitorCounter.style.transform = 'scale(1)';
-            }, 300);
-        });
+                // Add animation
+                visitorCounter.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    visitorCounter.style.transform = 'scale(1)';
+                }, 300);
+            }).catch((error) => {
+                console.error('Error accessing database:', error);
+                // Fallback to localStorage if database fails
+                let count = localStorage.getItem('visitCount') || 0;
+                count = parseInt(count) + 1;
+                localStorage.setItem('visitCount', count);
+                visitorCounter.textContent = count;
+            });
+        } catch (error) {
+            console.error('Error initializing database:', error);
+            // Fallback to localStorage if database fails
+            let count = localStorage.getItem('visitCount') || 0;
+            count = parseInt(count) + 1;
+            localStorage.setItem('visitCount', count);
+            visitorCounter.textContent = count;
+        }
     </script>
     <script>
         tailwind.config = {
