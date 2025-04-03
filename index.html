@@ -36,39 +36,85 @@
             try {
                 const database = firebase.database();
                 
-                // Get the current count from Firebase
-                database.ref('visitorCount').once('value', (snapshot) => {
-                    let count = snapshot.val() || 0;
-                    count++;
-                    
-                    // Update the count in Firebase
-                    database.ref('visitorCount').set(count);
-                    
-                    // Update the display
-                    visitorCounter.textContent = count;
+                // Get user's location
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const location = {
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
+                                timestamp: new Date().toISOString()
+                            };
+                            
+                            // Get current count and update
+                            database.ref('visitorCount').once('value', (snapshot) => {
+                                let count = snapshot.val()?.count || 0;
+                                count++;
+                                
+                                // Update count and store location
+                                database.ref('visitorCount').set({
+                                    count: count,
+                                    lastLocation: location
+                                });
+                                
+                                visitorCounter.textContent = count;
 
-                    // Add animation
-                    visitorCounter.style.transform = 'scale(1.2)';
-                    setTimeout(() => {
-                        visitorCounter.style.transform = 'scale(1)';
-                    }, 300);
-                }).catch((error) => {
-                    console.error('Error accessing database:', error);
-                    // Fallback to localStorage if database fails
-                    let count = localStorage.getItem('visitCount') || 0;
-                    count = parseInt(count) + 1;
-                    localStorage.setItem('visitCount', count);
-                    visitorCounter.textContent = count;
-                });
+                                // Add animation
+                                visitorCounter.style.transform = 'scale(1.2)';
+                                setTimeout(() => {
+                                    visitorCounter.style.transform = 'scale(1)';
+                                }, 300);
+                            }).catch((error) => {
+                                console.error('Error accessing database:', error);
+                                fallbackToLocalStorage(visitorCounter);
+                            });
+                        },
+                        (error) => {
+                            console.error('Error getting location:', error);
+                            // Continue with count update even if location fails
+                            updateCountWithoutLocation(database, visitorCounter);
+                        }
+                    );
+                } else {
+                    console.log('Geolocation is not supported by this browser.');
+                    updateCountWithoutLocation(database, visitorCounter);
+                }
             } catch (error) {
                 console.error('Error initializing database:', error);
-                // Fallback to localStorage if database fails
-                let count = localStorage.getItem('visitCount') || 0;
-                count = parseInt(count) + 1;
-                localStorage.setItem('visitCount', count);
-                visitorCounter.textContent = count;
+                fallbackToLocalStorage(visitorCounter);
             }
         });
+
+        // Helper function to update count without location
+        function updateCountWithoutLocation(database, visitorCounter) {
+            database.ref('visitorCount').once('value', (snapshot) => {
+                let count = snapshot.val()?.count || 0;
+                count++;
+                
+                database.ref('visitorCount').set({
+                    count: count,
+                    lastLocation: null
+                });
+                
+                visitorCounter.textContent = count;
+
+                // Add animation
+                visitorCounter.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    visitorCounter.style.transform = 'scale(1)';
+                }, 300);
+            }).catch((error) => {
+                console.error('Error accessing database:', error);
+                fallbackToLocalStorage(visitorCounter);
+            });
+        }
+
+        // Helper function for localStorage fallback
+        function fallbackToLocalStorage(visitorCounter) {
+            let count = parseInt(localStorage.getItem('visitCount') || '0') + 1;
+            localStorage.setItem('visitCount', count.toString());
+            visitorCounter.textContent = count;
+        }
     </script>
     <script>
         tailwind.config = {
@@ -646,41 +692,6 @@
                     });
                 }
             });
-        });
-
-        // Initialize Firebase and visitor counter
-        document.addEventListener('DOMContentLoaded', () => {
-            const visitorCounter = document.getElementById('visitorCounter');
-            if (!visitorCounter) return;
-
-            try {
-                const database = firebase.database();
-                database.ref('visitorCount').once('value', (snapshot) => {
-                    let count = snapshot.val() || 0;
-                    count++;
-                    
-                    database.ref('visitorCount').set(count);
-                    visitorCounter.textContent = count;
-
-                    // Add animation
-                    visitorCounter.style.transform = 'scale(1.2)';
-                    setTimeout(() => {
-                        visitorCounter.style.transform = 'scale(1)';
-                    }, 300);
-                }).catch((error) => {
-                    console.error('Error accessing database:', error);
-                    // Fallback to localStorage
-                    let count = parseInt(localStorage.getItem('visitCount') || '0') + 1;
-                    localStorage.setItem('visitCount', count.toString());
-                    visitorCounter.textContent = count;
-                });
-            } catch (error) {
-                console.error('Error initializing database:', error);
-                // Fallback to localStorage
-                let count = parseInt(localStorage.getItem('visitCount') || '0') + 1;
-                localStorage.setItem('visitCount', count.toString());
-                visitorCounter.textContent = count;
-            }
         });
     </script>
 </body>
