@@ -284,6 +284,22 @@
         .resume-button:hover svg {
             transform: translateY(2px);
         }
+        .visitor-counter {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 1.5rem;
+            color: #4f46e5;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        .dark .visitor-counter {
+            color: #818cf8;
+        }
+        .visitor-counter:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body class="bg-white dark:bg-gray-900 transition-colors duration-200">
@@ -503,6 +519,9 @@
         </div>
     </section>
 
+    <!-- Add this before the closing body tag -->
+    <div class="visitor-counter" id="visitorCounter"></div>
+
     <script>
         // Dark mode toggle functionality
         const darkModeToggle = document.getElementById('darkModeToggle');
@@ -564,6 +583,25 @@
                 }
             });
         });
+
+        // Visitor counter functionality
+        const visitorCounter = document.getElementById('visitorCounter');
+        let visitCount = localStorage.getItem('visitCount');
+        
+        if (!visitCount) {
+            visitCount = 1;
+        } else {
+            visitCount = parseInt(visitCount) + 1;
+        }
+        
+        localStorage.setItem('visitCount', visitCount);
+        visitorCounter.textContent = visitCount;
+
+        // Add animation to counter
+        visitorCounter.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+            visitorCounter.style.transform = 'scale(1)';
+        }, 300);
     </script>
 </body>
 </html> 
